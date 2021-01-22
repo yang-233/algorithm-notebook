@@ -1,41 +1,31 @@
 from typing import *
-
-
 class Solution:
-    def fractionToDecimal(self, numerator: int, denominator: int) -> str:
-        if numerator == 0:
-            return "0"
-        res = ""
-        if numerator * denominator < 0: # 负数先变成正数处理
-            res += "-"
-        numerator = abs(numerator)
-        denominator = abs(denominator)
+    def treeToDoublyList(self, root: 'Node') -> 'Node':
+        def dfs(root):
+            if root is None:
+                return None, None
 
-        if numerator == denominator:
-            return res + "1"   
+            lmin, lmax = dfs(root.left)
+            rmin, rmax = dfs(root.right)
 
-        int2str = [str(i) for i in range(10)]
-       
-        ans = {}
-        if numerator > denominator:
-            res += str(numerator // denominator)
-            numerator =  numerator % denominator
-            if numerator == 0: # 后面只处理小数部分
-                return res
-        else:
-            res += "0"
+            l = r = root
+            root.left = root.right = None
+
+            if lmax is not None: # 接上左侧最大的
+                root.left = lmax
+            if lmin is not None: # 左侧最小不是自身
+                l = lmin
+
+            if rmin is not None: # 接上右侧最小
+                root.right = rmin
+            if rmax is not None: # 如果右侧最大不是本身
+                r = rmax
+            print(root.val, l.val, r.val)
+            return l, r
         
-        res += "."
-        m = len(res) - 1
-        while numerator and numerator not in ans:
-            m += 1
-            ans[numerator] = m
-            numerator *= 10
-            res += int2str[numerator // denominator]
-            numerator %= denominator
-        
-        if numerator in ans:
-            res = res[:ans[numerator]] + "(" + res[ans[numerator]:] + ")"
-        return res   
+        lmin, rmax = dfs(root)
+        lmin.left = rmax
+        rmax.right = lmin
+        return lmin
 s = Solution()
-s.fractionToDecimal(1, 6)
+l = s.
